@@ -1,9 +1,18 @@
 import express from "express";
 import morgan from "morgan";
 import nunjucks from "nunjucks";
-import indexRouter from "./routes/index.js";
+import path from "path";
+import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
+import session from "express-session";
+import passport from "passport";
 
+import indexRouter from "./routes/index.js";
+import authRouter from "./routes/auth.js";
+
+dotenv.config();
 const app = express();
+const __dirname = path.resolve();
 app.set("port", process.env.NODE_ENV || 1000);
 app.set("view engine", "html");
 nunjucks.configure("views", {
@@ -12,10 +21,22 @@ nunjucks.configure("views", {
 });
 
 app.use(morgan("dev"));
+app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(session({
+  resave: false,
+  saveUninitialized: false,
+  secret: process.env.COOKIE_SECRET,
+  cookie: {
+    httpOnly: true,
+    secure: false,
+  },
+}));
 
 app.use("/", indexRouter);
+app.use("/auth", authRouter);
 
 app.use((req, res, next) => {
   const error = new Error(`$${req.method} ${req.url} 존재하지 않습니다.`);

@@ -1,13 +1,22 @@
 import { db } from "../database/index.js"
 
 const indexRender = async (req, res) => {
-  const sql = `
-    SELECT * FROM sections
-  `;
-  const result = await db.query(sql);
-  res.status(200).json(result[1]);
+  res.render("index");
+}
+
+const joinRender = async (req, res) => {
+  res.render("join");
+}
+
+const test = async (req, res) => {
+  db.query("SELECT * FROM users")
+    .then(res => console.log(res))
+    .catch(err => console.error(err));
+  res.end();
 }
 
 export {
   indexRender,
+  joinRender,
+  test,
 }
