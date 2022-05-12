@@ -9,9 +9,11 @@ import passport from "passport";
 
 import indexRouter from "./routes/index.js";
 import authRouter from "./routes/auth.js";
+import passportConfig from "./passport/index.js";
 
 dotenv.config();
 const app = express();
+passportConfig();
 const __dirname = path.resolve();
 app.set("port", process.env.NODE_ENV || 1000);
 app.set("view engine", "html");
@@ -34,6 +36,9 @@ app.use(session({
     secure: false,
   },
 }));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use("/", indexRouter);
 app.use("/auth", authRouter);

@@ -1,4 +1,5 @@
 import { db } from "../database/index.js"
+import bcrypt from "bcrypt";
 
 const indexRender = async (req, res) => {
   res.render("index");
@@ -8,15 +9,25 @@ const joinRender = async (req, res) => {
   res.render("join");
 }
 
+const mainRender = async (req, res) => {
+  res.render("main");
+  console.log(req.user);
+}
+
 const test = async (req, res) => {
-  db.query("SELECT * FROM users")
-    .then(res => console.log(res))
-    .catch(err => console.error(err));
-  res.end();
+  const sql = `
+    SELECT * FROM users U
+    JOIN info I
+      ON U.user_id = I.fk_user_id
+    WHERE U.user_id = 12
+  `;
+  const [ result ] = await db.query(sql);
+  res.json(result);
 }
 
 export {
   indexRender,
   joinRender,
+  mainRender,
   test,
 }

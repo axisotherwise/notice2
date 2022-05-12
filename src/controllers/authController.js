@@ -8,7 +8,7 @@ const authJoin = async (req, res, next) => {
   try {
     const existQuery = `SELECT name FROM users WHERE name = "${name}"`;
     const [ exist ] = await db.query(existQuery);
-    if (exist.length === 1) return res.status(409).redirect("/?error=이미 가입된 회원입니다.")
+    if (exist.length > 0) return res.status(409).redirect("/?error=이미 가입된 회원입니다.")
     await db.query("START TRANSACTION");
     const hash = await bcrypt.hash(password, 12);
     const joinQuery = `
@@ -35,26 +35,17 @@ const authJoin = async (req, res, next) => {
 }
 
 const authLogin = async (req, res, next) => {
-  const { name, password } = req.body; 
-  try {
-    passport.authenticate("local", (authError, user, info) => {
-      if (authError) {
-        console.error(authError);
-        return next(authError);
+  passport.authenticate("local", (authError, user, info) => {
+    if (authError) return next(authError);
+    if (!user) return res.redirect(`/?error=${info.message}`);
+    return req.login(user, (loginError) => {
+      if (loginError) {
+        console.error(loginError);
+        next(loginError);
       }
-      if (!user) return res.status(409).redirect("/?error=가입된 회원이 아닙니다.");
-      return req.login(user, (loginError) => {
-        if (loginError) {
-          console.error(loginError);
-          next(loginError);
-        }
-        return res.status(200).redirect("/main");
-      });
-    })(req, res, next);
-  } catch (err) {
-    console.error(err);
-    next(err);
-  }
+      return res.redirect("/main");
+    });
+  })(req, res, next);
 }
 
 export {
