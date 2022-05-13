@@ -2,9 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Document</title>
+  <title></title>
+  <style>
+    span {
+      display: block;
+    }
+  </style>
 </head>
 <body>
-  
+  <div>
+    {% for person in user %}
+    <span>이름 {{ person.name }}</span>
+    <span>나이 {{ person.age }}</span>
+    <span>연락처 {{ person.phone }}</span>
+    <span>주소 {{ person.address }}</span>
+    <span>등급 {{ person.grade }}</span>
+    {% endfor %}
+  </div>
+  <a href="/notice">게시판</a>
 </body>
 </html>

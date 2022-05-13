@@ -1,6 +1,6 @@
-import { db } from "../database/index.js";
 import passport from "passport";
 import bcrypt from "bcrypt";
+import { db } from "../database/index.js";
 
 const authJoin = async (req, res, next) => {
   const { name, password, age, email, phone, address, gender } = req.body;
@@ -19,7 +19,7 @@ const authJoin = async (req, res, next) => {
     const [ join ] = await db.query(joinQuery);
     const joinResult = join.insertId;
     const detailQuery = `
-      INSERT INTO info
+      INSERT INTO infos
         (fk_user_id, email, age, phone, address, married, gender)
         VALUES (${joinResult}, "${email}", ${age}, "${phone}", "${address}", ${married}, "${gender}")
     `;

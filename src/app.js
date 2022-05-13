@@ -9,12 +9,13 @@ import passport from "passport";
 
 import indexRouter from "./routes/index.js";
 import authRouter from "./routes/auth.js";
+import postRouter from "./routes/post.js";
 import passportConfig from "./passport/index.js";
 
 dotenv.config();
 const app = express();
-passportConfig();
 const __dirname = path.resolve();
+passportConfig();
 app.set("port", process.env.NODE_ENV || 1000);
 app.set("view engine", "html");
 nunjucks.configure("views", {
@@ -42,6 +43,7 @@ app.use(passport.session());
 
 app.use("/", indexRouter);
 app.use("/auth", authRouter);
+app.use("/post", postRouter);
 
 app.use((req, res, next) => {
   const error = new Error(`$${req.method} ${req.url} 존재하지 않습니다.`);
