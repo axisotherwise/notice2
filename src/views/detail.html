@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title></title>
+  <style>
+    button {
+      width: 240px;
+      margin-top: 20px;
+      margin-left: 30px;
+    }
+    input {
+      width: 230px;
+    }
+    textarea {
+      margin-top: 20px;
+      margin-left: 30px;
+      width: 232px;
+      height: 150px;
+    }
+  </style>
+</head>
+<body>
+  <form>
+    <h2>상세 내용</h2>
+    <h2>내 이름 {{ user[0].name }}</h2>
+    <div>번호<input type="text" value="{{ post[0].post_id }}" readonly></div>
+    <div>이름<input type="text" value="{{ post[0].name }}" readonly></div>
+    <div>제목<input type="text" value="{{ post[0].title }}" name="title" readonly class="title"></div>
+    <div><textarea name="content" class="content" readonly>{{ post[0].content }}</textarea></div>
+    <div>날짜<input type="text" value="{{ post[0].created }}"></div>
+    <img width="200" height="250" src="/image/{{ post[0].image1 }}" alt="No Image">
+    <img width="200" height="250" src="/image/{{ post[0].image2 }}" alt="No Image">
+    <img width="200" height="250" src="/image/{{ post[0].image3 }}" alt="No Image">
+    {% if user[0].user_id === post[0].user_id %}
+    <div>
+      <button type="submit">수정</button>
+    </div>
+    {% endif%}
+  </form>
+  <div><button class="delete">삭제</button></div>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+  const $form = document.querySelector("form");
+  const $deleteBtn = document.querySelector(".delete");
+  const $title = document.querySelector(".title");
+  const $content = document.querySelector(".content");
+
+  $form.addEventListener("submit", e => {
+    e.preventDefault();
+    const title = e.target[2].value;
+    const content = e.target[3].value;
+    axios.put("/post/update/{{ post[0].post_id }}", {
+      title,
+      content,
+    });
+    location.href = "/notice";
+  });
+  $title.addEventListener("click", e => {
+    const updateTitle = prompt("수정할 제목을 입력해 주세요.");
+    $title.value = updateTitle;
+  }); 
+  $content.addEventListener("click", e => {
+    const updateContent = prompt("수정할 내용을 입력해 주세요.");
+    $content.value = updateContent;
+  }); 
+  $deleteBtn.addEventListener("click", e => {
+    const postId = "{{ post[0].post_id }}";
+    axios.delete(`/post/delete/${postId}`);
+    location.href = "/notice";
+  });
+</script>
+</body>
+</html>

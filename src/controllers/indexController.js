@@ -22,8 +22,35 @@ const mainRender = async (req, res) => {
   });
 }
 
+const detailRender = async (req, res) => {
+  const query = `
+    SELECT *
+    FROM users U
+    JOIN posts P
+      ON U.user_id = P.fk_user_id
+    WHERE P.post_id = ${req.params.id}
+  `;
+  const [ result ] = await db.query(query);
+  res.render("detail", {
+    post: result,
+    user: req.user,
+  });
+  console.log(req.user);
+}
+
 const noticeRender = async (req, res) => {
-  res.render("notice");
+  const query = `
+    SELECT
+      U.name, P.post_id, P.title, P.created
+    FROM 
+      users U 
+    JOIN posts P
+      ON U.user_id = P.fk_user_id
+  `;
+  const [ result ] = await db.query(query);
+  res.render("notice", {
+    posts: result,
+  });
 }
 
 const writeRender = async (req, res) => {
@@ -32,19 +59,22 @@ const writeRender = async (req, res) => {
 
 const test = async (req, res) => {
   const query = `
-    SELECT * FROM users U
-    JOIN info I
-      ON U.user_id = I.fk_user_id
-    WHERE U.user_id = 12
+    SELECT *
+    FROM users U
+    JOIN posts P
+      ON U.user_id = P.fk_user_id
+    WHERE P.post_id = 4
   `;
   const [ result ] = await db.query(query);
-  res.json(result);
+  console.log(result);
+  res.end();
 }
 
 export {
   indexRender,
   joinRender,
   mainRender,
+  detailRender,
   noticeRender,
   writeRender,
   test,

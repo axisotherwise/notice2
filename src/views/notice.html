@@ -8,21 +8,28 @@
       padding: 10px;
     }
   </style>
-</head>
 <body>
+  <div><a href="/write">작성</a></div>
   <table>
-    <tbody>
+    <thead>
       <tr>
         <th>번호</th>
         <th>작성자</th>
         <th>제목</th>
         <th>날짜</th>
       </tr>
-      <td>1</td>
-      <td>관리자</td>
-      <td>관리자입니다.</td>
-      <td>2022-11-03</td>
+    </thead>
+    <tbody>
+      {% for post in posts %}
+      <tr>
+        <td>{{ post.post_id }}</td>
+        <td>{{ post.name }}</td>
+        <td><a href="/detail/{{ post.post_id }}">{{ post.title }}</a></td>
+        <td>{{ post.created }}</td>
+      </tr>
+      {% endfor %}
     </tbody>
   </table>
+  
 </body>
 </html>

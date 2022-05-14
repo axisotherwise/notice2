@@ -24,6 +24,7 @@ nunjucks.configure("views", {
 });
 
 app.use(morgan("dev"));
+app.use("/image", express.static(path.join(__dirname, "images")));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

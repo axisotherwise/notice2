@@ -23,22 +23,22 @@
   </style>
 </head>
 <body>
-  <form action="/post/write" method="post">
+  <form action="/post/write" method="post" enctype="multipart/form-data">
     <div class="title">제목<input type="text" name="title"></div>
     <div>내용<textarea name="content"></textarea></div>
-    <div><input type="file" name="image" class="image"></div>
+    <div><input type="file" name="image1"></div>
+    <div><input type="file" name="image2"></div>
+    <div><input type="file" name="image3"></div>
     <div><button class="write">작성</button></div>
   </form>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script>
-  const $image = document.querySelector(".image");
+  const $form = document.querySelector("form");
   
-  // $image.addEventListener("change", function(e) {
+  // $form.addEventListener("submit", function(e) {
+  //   e.preventDefault();
   //   const form = new FormData();
-  //   form.append("image", this.files[0]);
-  //   axios.post("/post/write", form)
-  //     .then(res => console.log(res))
-  //     .catch(err => console.error(err));
+    
   // });
 </script>
 </body>

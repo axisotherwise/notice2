@@ -37,7 +37,7 @@ const authJoin = async (req, res, next) => {
 const authLogin = async (req, res, next) => {
   passport.authenticate("local", (authError, user, info) => {
     if (authError) return next(authError);
-    if (!user) return res.redirect(`/?error=${info.message}`);
+    if (!user) return res.redirect(`/?error=${ info.message }`);
     return req.login(user, (loginError) => {
       if (loginError) {
         console.error(loginError);
