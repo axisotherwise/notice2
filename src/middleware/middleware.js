@@ -1,4 +1,4 @@
-const isAuthenticated = async (req, res, next) => {
+const isAuthenticated = (req, res, next) => {
   if (req.isAuthenticated()) {
     next();
   } else {
@@ -6,7 +6,7 @@ const isAuthenticated = async (req, res, next) => {
   }
 }
 
-const isNotAuthenticated = async (req, res, next) => {
+const isNotAuthenticated = (req, res, next) => {
   if (!req.isAuthenticated()) {
     next();
   } else {

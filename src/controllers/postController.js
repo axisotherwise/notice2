@@ -19,7 +19,6 @@ const multerImage = multer({
 const postWrite = async (req, res, next) => {
   try {
     // const result = req.files.image1?.[0].filename ?? "없습니다.";
-    // console.log(result);
     const userId = req.user[0].user_id;
     const query = `
       INSERT INTO posts
@@ -42,26 +41,36 @@ const postWrite = async (req, res, next) => {
   }
 }
 
-const postUpdate = async (req, res) => {
-  const query = `
+const postUpdate = async (req, res, next) => {
+  try {
+    const query = `
     UPDATE posts
     SET 
       title = "${req.body.title}",
       content = "${req.body.content}"
     WHERE
       post_id = ${req.params.id}
-  `;
-  const [ result ] = await db.query(query);
-  return res.send("success");
+    `;
+    const [ result ] = await db.query(query);
+    return res.send("success");
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
 }
 
-const postDelete = async (req, res) => {
-  const query = `
+const postDelete = async (req, res, next) => {
+  try {
+    const query = `
     DELETE FROM posts
     WHERE post_id = ${req.params.id}
-  `;
-  const [ result ] = await db.query(query);
-  return res.redirect("/notice");
+    `;
+    const [ result ] = await db.query(query);
+    return res.redirect("/notice");
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
 }
 
 export {
