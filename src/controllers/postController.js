@@ -1,6 +1,6 @@
 import multer from "multer";
 import path from "path";
-import { db } from "../database/index.js";
+import { userQuery } from "../database/index.js";
 
 const multerNone = multer();
 const multerImage = multer({
@@ -17,60 +17,15 @@ const multerImage = multer({
 });
 
 const postWrite = async (req, res, next) => {
-  try {
-    // const result = req.files.image1?.[0].filename ?? "없습니다.";
-    const userId = req.user[0].user_id;
-    const query = `
-      INSERT INTO posts
-        (fk_user_id, title, content, image1, image2, image3)
-        VALUES (
-          ${userId}, 
-          "${req.body.title}", 
-          "${req.body.content}", 
-          "${req.files.image1?.[0].filename ?? null}",
-          "${req.files.image2?.[0].filename ?? null}",
-          "${req.files.image3?.[0].filename ?? null}"
-          )
-    `;
-    const [ result ] = await db.query(query);
-    console.log(result);
-    return res.redirect("/notice");
-  } catch (err) {
-    console.error(err);
-    next(err);
-  }
+
 }
 
 const postUpdate = async (req, res, next) => {
-  try {
-    const query = `
-    UPDATE posts
-    SET 
-      title = "${req.body.title}",
-      content = "${req.body.content}"
-    WHERE
-      post_id = ${req.params.id}
-    `;
-    const [ result ] = await db.query(query);
-    return res.send("success");
-  } catch (err) {
-    console.error(err);
-    next(err);
-  }
+
 }
 
 const postDelete = async (req, res, next) => {
-  try {
-    const query = `
-    DELETE FROM posts
-    WHERE post_id = ${req.params.id}
-    `;
-    const [ result ] = await db.query(query);
-    return res.redirect("/notice");
-  } catch (err) {
-    console.error(err);
-    next(err);
-  }
+
 }
 
 export {

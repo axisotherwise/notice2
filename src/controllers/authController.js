@@ -1,42 +1,36 @@
 import passport from "passport";
 import bcrypt from "bcrypt";
-import { db } from "../database/index.js";
+import { 
+  db,
+  userQuery,
+  authQuery,              
+} from "../database/index.js";
 
 const authJoin = async (req, res, next) => {
-  const { name, password, age, email, phone, address, gender } = req.body;
-  const married = req.body.married ? 1 : 0;
+  const { name, password, email, gender } = req.body;
   try {
-    const existQuery = `SELECT name FROM users WHERE name = "${name}" LIMIT 1`;
-    const [ exist ] = await db.query(existQuery);
-    if (exist.length > 0) return res.status(409).redirect("/?error=이미 가입된 회원입니다.")
     await db.query("START TRANSACTION");
+    const searchName = await userQuery.searchName(name);
+    if (searchName.length > 0) return res.redirect("/?error=이미 가입된 회원입니다.");
     const hash = await bcrypt.hash(password, 12);
-    const joinQuery = `
-      INSERT INTO users
-        (name, password)
-        VALUES ("${name}", "${hash}")
-    `;
-    const [ join ] = await db.query(joinQuery);
-    const joinResult = join.insertId;
-    const detailQuery = `
-      INSERT INTO infos
-        (fk_user_id, email, age, phone, address, married, gender)
-        VALUES (${joinResult}, "${email}", ${age}, "${phone}", "${address}", ${married}, "${gender}")
-    `;
-    const [ detail ] = await db.query(detailQuery);
-    console.log(detail);
+    const joinUser = await authQuery.joinUser(name, hash);
+    const userId = joinUser.insertId;
+    const user = await authQuery.infoUser(userId, email, gender);
     await db.query("COMMIT");
-    return res.status(201).redirect("/");
+    res.json(user);
   } catch (err) {
-    console.error(err);
     await db.query("ROLLBACK");
+    console.error(err);
     next(err);
   }
 }
 
 const authLogin = async (req, res, next) => {
   passport.authenticate("local", (authError, user, info) => {
-    if (authError) return next(authError);
+    if (authError) {
+      console.error(authError);
+      next(authError);
+    }
     if (!user) return res.redirect(`/?error=${ info.message }`);
     return req.login(user, (loginError) => {
       if (loginError) {

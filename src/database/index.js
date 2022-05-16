@@ -22,43 +22,47 @@ pool.getConnection(async (err, conn) => {
 
 const db = pool.promise();
 
-const query = {
-  getUsers: async (name) => {
-    const [ result ] = await db.query(`
-      SELECT * FROM users
-      WHERE name = "${name}"
+const userQuery = {
+  searchId: async (id) => {
+    const [ sql ] = await db.query(`
+      SELECT * FROM users U
+      JOIN infos I
+        ON U.user_id = I.fk_user_id
+      WHERE U.user_id = ${id}
     `);
-    return result;
+    return sql;
   },
-  searchUser: async (name) => {
-    const sql = await db.query(`
+  searchName: async (name) => {
+    const [ sql ] = await db.query(`
       SELECT * FROM users
       WHERE name = "${name}"
     `);
     return sql;
   },
-  insertUser: async (a, b) => {
-    const testing = `
-      INSERT INTO users 
-        (name, password) 
-        VALUES ("${a}", "${b}") 
-    `
-    const [ result ] = await db.query(testing);
-    return result;
+}
+
+const authQuery = {
+  joinUser: async (name, password) => {
+    const [ sql ] = await db.query(`
+      INSERT INTO users
+        (name, password)
+        VALUES
+        ("${name}", "${password}")
+    `);
+    return sql;
   },
-  insertInfo: async (foreignKey, email, gender) => {
-    const sql = `
+  infoUser: async (fk, email, gender) => {
+    const [ sql ] = await db.query(`
       INSERT INTO infos
         (fk_user_id, email, gender)
-        VALUES (${foreignKey}, "${email}}", "${gender}")
-    `
-    const [ result ] = await db.query(sql);
-    return result;
+        VALUES
+        (${fk}, "${email}", "${gender}")
+    `);
   },
-};
+}
 
 export {
   db,
-  query,
-
+  userQuery,
+  authQuery,
 }

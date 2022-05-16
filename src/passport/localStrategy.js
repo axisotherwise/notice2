@@ -1,7 +1,7 @@
 import passport from "passport";
 import passportLocal from "passport-local";
 import bcrypt from "bcrypt";
-import { db } from "../database/index.js";
+import { userQuery } from "../database/index.js";
 
 const LocalStrategy = passportLocal.Strategy;
 
@@ -11,18 +11,16 @@ export default () => {
     passwordField: "password",
   }, async (name, password, done) => {
     try {
-      const sql = `SELECT * FROM users WHERE name = "${name}"`;
-      const [ exist ] = await db.query(sql);
-      const user = exist[0];
-      if (user) {
-        const compare = await bcrypt.compare(password, user.password);
+      const searchName = await userQuery.searchName(name);
+      if (searchName) {
+        const compare = await bcrypt.compare(password, searchName[0].password);
         if (compare) {
-          done(null, user);
+          done(null, searchName[0]);
         } else {
           done(null, false, { message: "비밀번호 불일치" });
         }
       } else {
-        done(null, false, { message: "가입되지 않은 회원" });
+        done(null, false, { message: "가입된 회원이 아닙니다." });
       }
     } catch (err) {
       console.error(err);
