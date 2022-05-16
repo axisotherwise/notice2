@@ -10,6 +10,7 @@ import passport from "passport";
 import indexRouter from "./routes/index.js";
 import authRouter from "./routes/auth.js";
 import postRouter from "./routes/post.js";
+import testRouter from "./routes/test.js";
 import passportConfig from "./passport/index.js";
 
 dotenv.config();
@@ -45,6 +46,7 @@ app.use(passport.session());
 app.use("/", indexRouter);
 app.use("/auth", authRouter);
 app.use("/post", postRouter);
+app.use("/test", testRouter);
 
 app.use((req, res, next) => {
   const error = new Error(`$${req.method} ${req.url} 존재하지 않습니다.`);

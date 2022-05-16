@@ -10,7 +10,6 @@ import {
   detailRender,
   noticeRender,
   writeRender,
-  test,
 } from "../controllers/indexController.js";
 
 const router = express.Router();
@@ -21,7 +20,6 @@ router.get("/main", isAuthenticated, mainRender);
 router.get("/detail/:id", isAuthenticated, detailRender);
 router.get("/notice", isAuthenticated, noticeRender);
 router.get("/write", isAuthenticated, writeRender);
-router.get("/test", test);
 
 export default router;
 

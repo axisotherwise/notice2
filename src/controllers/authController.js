@@ -6,7 +6,7 @@ const authJoin = async (req, res, next) => {
   const { name, password, age, email, phone, address, gender } = req.body;
   const married = req.body.married ? 1 : 0;
   try {
-    const existQuery = `SELECT name FROM users WHERE name = "${name}"`;
+    const existQuery = `SELECT name FROM users WHERE name = "${name}" LIMIT 1`;
     const [ exist ] = await db.query(existQuery);
     if (exist.length > 0) return res.status(409).redirect("/?error=이미 가입된 회원입니다.")
     await db.query("START TRANSACTION");
