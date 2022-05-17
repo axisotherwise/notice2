@@ -16,7 +16,7 @@ const router = express.Router();
 
 router.get("/", indexRender);
 router.get("/join", isNotAuthenticated, joinRender);
-router.get("/main",  mainRender);
+router.get("/main",  isAuthenticated, mainRender);
 router.get("/detail/:id", isAuthenticated, detailRender);
 router.get("/notice", isAuthenticated, noticeRender);
 router.get("/write", isAuthenticated, writeRender);

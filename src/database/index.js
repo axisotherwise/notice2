@@ -23,6 +23,16 @@ pool.getConnection(async (err, conn) => {
 const db = pool.promise();
 
 const userQuery = {
+  usersPosts: async () => {
+    const [ sql ] = await db.query(`
+      SELECT * FROM users U
+      JOIN infos I
+        ON U.user_id = I.fk_user_id
+      JOIN posts P
+        ON U.user_id = P.fk_user_id
+    `);
+    return sql;
+  },
   searchId: async (id) => {
     const [ sql ] = await db.query(`
       SELECT * FROM users U
@@ -61,8 +71,47 @@ const authQuery = {
   },
 }
 
+const postQuery = {
+  searchId: async (id) => {
+    const [ sql ] = await db.query(`
+      SELECT * FROM users U
+      JOIN posts P
+        ON U.user_id = P.fk_user_id
+      WHERE P.post_id = ${id}
+    `);
+    return sql;
+  },
+  writePost: async (fk, title,  content, image1, image2, image3) => {
+    const[ sql ] = await db.query(`
+      INSERT INTO posts 
+        (fk_user_id, title, content, image1, image2, image3)   
+        VALUES (${fk}, "${title}", "${content}", "${image1}", "${image2}", "${image3}")
+    `);
+    return sql;
+  },
+  deletePost: async (id) => {
+    const [ sql ] = await db.query(`
+      DELETE FROM posts
+      WHERE post_id = ${id}
+    `);
+    return sql;
+  },
+  updatePost: async (id, title, content) => {
+    const [ sql ] = await db.query(`
+      UPDATE posts
+      SET
+        title = "${title}",
+        content = "${content}"
+      WHERE
+        post_id = ${id}
+    `);
+    return sql;
+  },
+}
+
 export {
   db,
   userQuery,
   authQuery,
+  postQuery,
 }
